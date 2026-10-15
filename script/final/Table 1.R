@@ -12,7 +12,7 @@ library(gtsummary)
 library(glue)
 library(forcats)
 
-data_clean3 <- readRDS("dataset/db01.rds")
+data_clean3 <- readRDS("dataset/db01_reduced.rds")
 
 data_clean3 <- data_clean3 %>%
   filter(idade >= 60)
@@ -269,4 +269,107 @@ tabla2 <- data_clean3 %>%
   )
 
 tabla2
+
+table(data_clean3$Obito)
+
+
+##############################
+## miss folow-up
+##############################
+
+tabla2 <- data_clean3 %>% si data_clean3$Obito igual a Death %>%
+  dplyr::select(
+    idade, sexo_f, estado_civil_rec2,
+    fuma_rec, alcool_rec,
+    alfabetizado,
+    renda_rec,
+    filhos_rec,
+    moradores_rec,
+    any_comorbidity,
+    starts_with("comorbidades___")
+  ) %>%
+  tbl_summary(
+    statistic = list(
+      idade ~ "{median} ({p25}–{p75})",
+      all_categorical() ~ "{n} ({p}%)"
+    ),
+    label = list(
+      idade ~ "Age, median (IQR)",
+      sexo_f ~ "Female sex",
+      estado_civil_rec2 ~ "Marital status",
+      fuma_rec ~ "Smoking",
+      alcool_rec ~ "Alcohol consumption",
+      alfabetizado ~ "Education level",
+      renda_rec ~ "Income (minimum wage)",
+      filhos_rec ~ "Has children",
+      moradores_rec ~ "Number of people in household",
+      any_comorbidity ~ "Any comorbidity",
+      comorbidades___1 ~ "Hypertension",
+      comorbidades___2 ~ "Diabetes",
+      comorbidades___3 ~ "Cardiovascular disease",
+      comorbidades___4 ~ "Cancer",
+      comorbidades___5 ~ "Stroke (CVA)",
+      comorbidades___6 ~ "Dyslipidemia",
+      comorbidades___7 ~ "Osteoporosis",
+      comorbidades___8 ~ "Arthritis or osteoarthritis",
+      comorbidades___9 ~ "Depression",
+      comorbidades___10 ~ "Other comorbidities"
+    )
+  ) %>%
+  modify_table_body(
+    ~ .x %>%
+      filter(!(variable == "alfabetizado" & label != "Not literate"))
+  )
+
+tabla2
+
+
+tabla3 <- data_clean3 %>%
+  dplyr::filter(Obito == "Death") %>%
+  dplyr::select(
+    idade, sexo_f, estado_civil_rec2,
+    fuma_rec, alcool_rec,
+    alfabetizado,
+    renda_rec,
+    filhos_rec,
+    moradores_rec,
+    any_comorbidity,
+    starts_with("comorbidades___")
+  ) %>%
+  tbl_summary(
+    statistic = list(
+      idade ~ "{median} ({p25}–{p75})",
+      all_categorical() ~ "{n} ({p}%)"
+    ),
+    label = list(
+      idade ~ "Age, median (IQR)",
+      sexo_f ~ "Female sex",
+      estado_civil_rec2 ~ "Marital status",
+      fuma_rec ~ "Smoking",
+      alcool_rec ~ "Alcohol consumption",
+      alfabetizado ~ "Education level",
+      renda_rec ~ "Income (minimum wage)",
+      filhos_rec ~ "Has children",
+      moradores_rec ~ "Number of people in household",
+      any_comorbidity ~ "Any comorbidity",
+      comorbidades___1 ~ "Hypertension",
+      comorbidades___2 ~ "Diabetes",
+      comorbidades___3 ~ "Cardiovascular disease",
+      comorbidades___4 ~ "Cancer",
+      comorbidades___5 ~ "Stroke (CVA)",
+      comorbidades___6 ~ "Dyslipidemia",
+      comorbidades___7 ~ "Osteoporosis",
+      comorbidades___8 ~ "Arthritis or osteoarthritis",
+      comorbidades___9 ~ "Depression",
+      comorbidades___10 ~ "Other comorbidities"
+    )
+  ) %>%
+  modify_table_body(
+    ~ .x %>%
+      dplyr::filter(
+        !(variable == "alfabetizado" & label != "Not literate")
+      )
+  )
+
+tabla3
 
